@@ -1,0 +1,168 @@
+             STORYBOARD
+Spanning Tree
+Given a connected undirected graph  ,   is a spanning tree if  ,  ,   is acyclic, and   is connected.
+  can only have a spanning tree if it is connected.
+The number of edges in a spanning tree is  .
+  is a tree because it is acyclic.
+  is spanning because it every vertex from  .
+Minimum Spanning Tree
+If weights are associated with each edge on graph  , then each spanning tree   has a weight which is the total weight of each edge in  .
+The minimum spanning tree is the spanning tree with weight less than or equal to every other spanning tree.
+A graph may have multiple minimum spanning trees.
+If all the edges in a graph have the same weight, the all spanning trees are minimum.
+If each edge has a distinct weight, then there will be only one minimum spanning tree.
+Example (a graph and its minimum spanning tree)
+ 
+Prim’s Algorithm
+Prim’s algorithm is similar to Dijkstra’s algorithm for shortest paths, except distance is the weight of the shortest edge connection an unknown vertex to a known vertex (in Dijkstra’s, it was a sum).
+After a vertex   is selected, for each unknown   adjacent to  ,  .
+The general strategy
+Choose a starting vertex, say   and mark it as known.
+The path length from   to   is 0.
+Find all vertices adjacent to  . These are  ,  , and  .
+Adjust the distance and vertex for  ,  , and   (e.g.   and  ).
+Find the unknown vertex with the smallest distance. Select   and mark it as known.
+Find all the vertices adjacent to  . These are  ,    ,  ,  , and  .
+  is already known, so no change.
+Adjust the distance and vertex for    ,  ,  , and   (e.g.   and  )
+For  ,  . Since  , then no change to  
+Find the unknown vertex with the smallest distance (could be either   or  ). Select   and mark it as known.
+Find all vertices adjacent to  . These are  ,   and  .
+  and   are already known, so no change.
+Adjust the distance and vertex for  .  . Since  , then no change to  .
+Find the unknown vertex with the smallest distance. Select   and mark it as known.
+Find all the vertices adjacent to  . These are  ,   and  .
+  and   are already known, so no change.
+Adjust the distance and vertex for  .  . Since  , then   and  .
+Find the unknown vertex with the smallest distance. Select   and mark it as known.
+Find all the vertices adjacent to  . These are  ,   and  .
+  is known, so no change.
+Adjust the distance and vertex for   and  .
+ ,  
+ ,  
+Find the unknown vertex with the smallest distance. Select   and mark it as known.
+Find all the vertices adjacent to  . These are  ,   and  .
+These are all known, so no change.
+Find the unknown vertex with the smallest distance. Select   and mark it as known.
+Find all the vertices adjacent to  . These are  ,   and  .
+These are all known, so no change.
+v	known	distance	path vertex
+ 
+	0	―
+ 
+		
+ 
+		
+ 
+		
+ 
+		
+ 
+		
+ 
+		
+
+v	known	distance	path vertex
+ 
+	0	―
+ 
+	2	 
+
+ 
+	2	 
+
+ 
+	1	 
+
+ 
+	6	 
+
+ 
+	1	 
+
+ 
+	4	 
+
+Data Structures
+const int NO_OF_ELEMENTS = 100;
+
+struct Follower;
+struct Follower
+{
+	Object    vertex;
+	int       distance;
+	Follower *nextFollower;
+};
+
+struct Leader
+{
+	Object    vertex;
+	bool      known;
+	int       distance;
+	Follower *firstFollower;
+};
+
+Leader a[NO_OF_ELEMENTS];
+ 
+Prim’s Minimum Spanning Tree Algorithm
+PrimsMinimumSpanningTree (startVertex)
+for i = 1 to Length(a) – 1
+	a[i].vertex = 0
+	a[i].known = FALSE
+	a[i].distance = HIGH_VALUE
+	a[i].firstFollower = NULL
+x = Read(input)
+while x != END_OF_INPUT
+	y = Read(input)
+	p = new Follower Node
+	p->vertex = y
+	z = Read(input)
+	p->distance = z
+	p->nextFollower = a[x].firstFollower
+	a[x].firstFollower = p
+	p = new Follower node
+	p->vertex = x
+	p->distance = z
+	p->nextFollower = a[y].firstFollower
+	a[y].firstFollower = p
+	x = Read(input)
+a[startVertex].vertex = startVertex
+a[startVertex].distance = 0
+i = startVertex
+while 1
+	a[i].known = TRUE
+	p = a[i].firstFollower
+	while p != NULL
+		if a[p->vertex].known == FALSE
+			if p->distance < a[p->vertex].distance
+				a[p->vertex].distance = p->distance
+				a[p->vertex].vertex = i
+		p = p->next
+	i = FindNextVertex(a)
+	if i == NO_VERTEX_FOUND
+		break
+for i = 1 to Length(a) – 1
+	if a[i].vertex != i
+		Print (linefeed)
+		Print (i)
+		Print (“--”)
+		Print (a[i].vertex)
+Additional Function:
+FindNextVertex (a)
+nextVertex = NO_VERTEX_FOUND
+shortestDistance = HIGH_VALUE
+for i = 1 to Length(a) – 1
+	if a[i].distance <= shortestDistance and a[i].known == FALSE
+		nextVertex = i
+		shortestDistance = a[i].distance
+return nextVertex
+Program Output:
+2--1
+3--4
+4--1
+5--7
+6--7
+7--4
+The phase that finds the shortest edges has  .
+The FindNextVertex function reads all   vertices   times (i.e. ).
+For each vertex, each adjacent vertex is checked to determined whether the distance can be reduced. This requires   edge traversals (i.e.  ).
